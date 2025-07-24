@@ -1,43 +1,13 @@
 ---@class blink-ripgrep.FdBackend
----@field opts blink-cmp-wiki-links.Options
+---@field wiki_links_opts blink-cmp-wiki-links.Options
 local FdBackend = {}
 
----@param opts blink-cmp-wiki-links.Options
+---@param wiki_links_opts blink-cmp-wiki-links.Options
 ---@return blink-ripgrep.FdBackend
-function FdBackend.new(opts)
+function FdBackend.new(wiki_links_opts)
   local self = setmetatable({}, { __index = FdBackend })
-  self.opts = opts
+  self.wiki_links_opts = wiki_links_opts
   return self
-end
-
----Get workspace root directory
----@return string
-function FdBackend:get_workspace_root()
-  if
-    self.opts.get_workspace_root
-    and type(self.opts.get_workspace_root) == "function"
-  then
-    return self.opts.get_workspace_root()
-  end
-
-  -- Try to find common workspace indicators
-  local indicators = { ".git", "README.md" }
-
-  local current_dir = vim.fn.expand("%:p:h")
-  while current_dir ~= "/" do
-    for _, indicator in ipairs(indicators) do
-      if
-        vim.fn.isdirectory(current_dir .. "/" .. indicator) == 1
-        or vim.fn.filereadable(current_dir .. "/" .. indicator) == 1
-      then
-        return current_dir
-      end
-    end
-    current_dir = vim.fn.fnamemodify(current_dir, ":h")
-  end
-
-  -- Fallback to current working directory
-  return vim.fn.getcwd()
 end
 
 ---Build fd command with options and prefix
@@ -47,13 +17,13 @@ function FdBackend:build_fd_command(prefix)
   local cmd = { "fd" }
 
   -- Add file extensions
-  for _, filetype in ipairs(self.opts.filetypes) do
+  for _, filetype in ipairs(self.wiki_links_opts.filetypes) do
     table.insert(cmd, "-e")
     table.insert(cmd, filetype)
   end
 
   -- Add exclusions
-  for _, exclude in ipairs(self.opts.exclude_paths) do
+  for _, exclude in ipairs(self.wiki_links_opts.exclude_paths) do
     table.insert(cmd, "-E")
     table.insert(cmd, exclude)
   end
@@ -72,8 +42,10 @@ end
 function FdBackend:get_matches(prefix, callback)
   local cmd = self:build_fd_command(prefix)
 
+  local root = vim.fs.root(0, self.wiki_links_opts.project_root_marker) or vim.fn.getcwd()
+
   -- Execute the command and process results
-  local fd = vim.system(cmd, { cwd = vim.uv.cwd() or "" }, function(result)
+  local fd = vim.system(cmd, { cwd = root }, function(result)
     vim.schedule(function()
       if result.code ~= 0 then
         callback()

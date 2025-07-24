@@ -3,7 +3,7 @@
 ---@class blink-cmp-wiki-links.Options
 ---@field filetypes string[] Filetypes to enable this source for (e.g., {"markdown", "md"})
 ---@field exclude_paths string[] Directories to exclude from search
----@field get_workspace_root? function Custom workspace detection function
+---@field project_root_marker? unknown Specifies how to find the root of the project where fd search will start from. Accepts the same options as the marker given to `:h vim.fs.root()` which offers many possibilities for configuration. Defaults to ".git".
 ---@field prefix_min_len number The minimum length of the current word to start searching (if the word is shorter than this, the search will not start)
 ---@field preview_line_length number The maximum number of lines to show in the preview (default: 30)
 
@@ -16,7 +16,7 @@ WikiLinksSource.__index = WikiLinksSource
 WikiLinksSource.wiki_links_opts = {
   filetypes = { "markdown", "md" },
   exclude_paths = { ".git", "node_modules", ".obsidian", ".trash" },
-  get_workspace_root = nil,
+  project_root_marker = ".git",
   prefix_min_len = 3,
   preview_line_length = 20,
 }
