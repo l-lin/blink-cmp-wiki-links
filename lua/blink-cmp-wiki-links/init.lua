@@ -1,0 +1,96 @@
+---@module "blink.cmp"
+
+---@class blink-cmp-wiki-links.Options
+---@field filetypes string[] Filetypes to enable this source for (e.g., {"markdown", "md"})
+---@field exclude_paths string[] Directories to exclude from search
+---@field get_workspace_root? function Custom workspace detection function
+---@field prefix_min_len number The minimum length of the current word to start searching (if the word is shorter than this, the search will not start)
+---@field preview_line_length number The maximum number of lines to show in the preview (default: 30)
+
+---@class blink-cmp-wiki-links.WikiLinksSource : blink.cmp.Source
+---@field wiki_links_opts blink-cmp-wiki-links.Options
+local WikiLinksSource = {}
+WikiLinksSource.__index = WikiLinksSource
+
+---@type blink-cmp-wiki-links.Options
+WikiLinksSource.wiki_links_opts = {
+  filetypes = { "markdown", "md" },
+  exclude_paths = { ".git", "node_modules", ".obsidian", ".trash" },
+  get_workspace_root = nil,
+  prefix_min_len = 3,
+  preview_line_length = 20,
+}
+
+---@param input_wiki_links_opts blink-cmp-wiki-links.Options
+function WikiLinksSource.new(input_wiki_links_opts)
+  local self = setmetatable({}, WikiLinksSource)
+  WikiLinksSource.wiki_links_opts =
+    vim.tbl_deep_extend("force", WikiLinksSource.wiki_links_opts, input_wiki_links_opts or {})
+  return self
+end
+
+---Extract the prefix from the context.
+---The prefix is the current word being typed in the editor, so it can be in the
+---middle of a line.
+---@self blink-cmp-wiki-links.WikiLinksSource
+---@param context blink.cmp.Context
+function WikiLinksSource:get_prefix(context)
+  local prefix = ""
+  if context.bounds and context.bounds.length > 0 then
+    prefix = context.line:sub(
+      context.bounds.start_col,
+      context.bounds.start_col + context.bounds.length - 1
+    )
+  end
+  return prefix
+end
+
+
+-- Check if the source should be enabled in current context
+---@param self blink.cmp.Source
+---@return boolean
+function WikiLinksSource:enabled()
+  local filetype = vim.bo.filetype
+  return vim.tbl_contains(WikiLinksSource.wiki_links_opts.filetypes, filetype)
+end
+
+-- Main completion method with callback
+---@param self blink-cmp-wiki-links.WikiLinksSource
+---@param ctx blink.cmp.Context
+---@param callback fun(self: blink.cmp.CompletionResponse): nil
+function WikiLinksSource:get_completions(ctx, callback)
+  local prefix = self:get_prefix(ctx)
+
+  if string.len(prefix) < self.wiki_links_opts.prefix_min_len then
+    callback({
+      items = {},
+      is_incomplete_forward = true,
+      is_incomplete_backward = false,
+    })
+    return
+  end
+
+  local backend = require("blink-cmp-wiki-links.fd").new(WikiLinksSource.wiki_links_opts)
+  local cancellation_function = backend:get_matches(prefix, callback)
+  return cancellation_function
+end
+
+-- Resolve completion items before accepting or showing documentation
+-- Before accepting the item or showing documentation, blink.cmp will call this function
+-- so you may avoid calculating expensive fields (i.e. documentation) for only when they're actually needed
+---@param self blink-cmp-wiki-links.WikiLinksSource
+---@param item blink.cmp.CompletionItem
+---@param callback blink.cmp.CompletionResponse
+function WikiLinksSource:resolve(item, callback)
+  item = vim.deepcopy(item)
+
+  -- read all file content
+  local text = vim.fn.readfile(item.detail, "", self.wiki_links_opts.preview_line_length) or {}
+  item.documentation = {
+    kind = "markdown",
+    value = table.concat(text, "\n"),
+  }
+  callback(item)
+end
+
+return WikiLinksSource
