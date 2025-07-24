@@ -26,3 +26,12 @@ watch:
 	fi
 	@echo "Running tests in watch mode (press Ctrl+C to stop)..."
 	@find lua/ spec/ -name "*.lua" | entr -c make test
+
+.PHONY: help test
+all: help
+help: Makefile
+	@echo
+	@echo " Choose a command run in "${PROJECT_NAME}":"
+	@echo
+	@sed -n 's/^##//p' $< | column -t -s ':' |  sed -e 's/^/ /'
+	@echo

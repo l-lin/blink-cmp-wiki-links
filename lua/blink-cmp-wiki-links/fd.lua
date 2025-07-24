@@ -40,10 +40,10 @@ function FdBackend:get_workspace_root()
   return vim.fn.getcwd()
 end
 
----@param self blink-ripgrep.FdBackend
----@param prefix string the prefix to search for
----@param callback fun(response?: blink.cmp.CompletionResponse) callback to resolve the completion response
-function FdBackend:get_matches(prefix, callback)
+---Build fd command with options and prefix
+---@param prefix string|nil the prefix to search for
+---@return string[] the fd command array
+function FdBackend:build_fd_command(prefix)
   local cmd = { "fd" }
 
   -- Add file extensions
@@ -60,9 +60,17 @@ function FdBackend:get_matches(prefix, callback)
 
   -- Add prefix filter
   if prefix and #prefix > 0 then
-    -- Ensure the prefix is escaped for shell safety
     table.insert(cmd, prefix)
   end
+
+  return cmd
+end
+
+---@param self blink-ripgrep.FdBackend
+---@param prefix string the prefix to search for
+---@param callback fun(response?: blink.cmp.CompletionResponse) callback to resolve the completion response
+function FdBackend:get_matches(prefix, callback)
+  local cmd = self:build_fd_command(prefix)
 
   -- Execute the command and process results
   local fd = vim.system(cmd, { cwd = vim.uv.cwd() or "" }, function(result)
