@@ -72,10 +72,6 @@ configuration for blink:
             filetypes = { "markdown", "md", "txt" },
             -- More exclusions
             exclude_paths = { ".git", ".obsidian", "assets", "images", ".trash" },
-            -- Require more characters before searching
-            prefix_min_len = 2,
-            -- Show more lines in preview
-            preview_line_length = 30,
             -- Specifies how to find the root of the project where the fd
             -- search will start from. Accepts the same options as the marker
             -- given to `:h vim.fs.root()` which offers many possibilities for
@@ -85,6 +81,10 @@ configuration for blink:
             -- - ".git" (default)
             -- - { ".git", "package.json", ".root" }
             project_root_marker = ".git",
+            -- Require more characters before searching
+            prefix_min_len = 3,
+            -- Show more lines in preview
+            preview_line_length = 30,
           },
           score_offset = 85,
         },
