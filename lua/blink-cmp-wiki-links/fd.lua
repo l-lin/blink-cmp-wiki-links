@@ -16,6 +16,11 @@ end
 function FdBackend:build_fd_command(prefix)
   local cmd = { "fd" }
 
+  -- Add custom fd options first
+  for _, option in ipairs(self.wiki_links_opts.additional_fd_options) do
+    table.insert(cmd, option)
+  end
+
   -- Add file extensions
   for _, filetype in ipairs(self.wiki_links_opts.filetypes) do
     table.insert(cmd, "-e")

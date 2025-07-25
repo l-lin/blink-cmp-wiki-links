@@ -85,6 +85,8 @@ configuration for blink:
             prefix_min_len = 3,
             -- Show more lines in preview
             preview_line_length = 30,
+            -- Additional options to pass to the fd command
+            additional_fd_options = { "--hidden", "--follow", "--max-depth", "3" },
           },
           score_offset = 85,
         },
@@ -116,8 +118,8 @@ configuration for blink:
 - [x] Configurable filetypes
 - [x] Workspace detection
 - [x] Display relative path in the preview
+- [x] Add option to add more options to `fd`
 - [ ] take into account space in autocompletion
-- [ ] Add option to add more options to `fd`
 - [ ] Add GIF in README
 - [ ] Add another configurable icon
 - [ ] Add `rg` to find all references to the prefix having `[[text]]` in another files and that do not have any file

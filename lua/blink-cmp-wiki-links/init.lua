@@ -6,6 +6,7 @@
 ---@field project_root_marker? unknown Specifies how to find the root of the project where fd search will start from. Accepts the same options as the marker given to `:h vim.fs.root()` which offers many possibilities for configuration. Defaults to ".git".
 ---@field prefix_min_len number The minimum length of the current word to start searching (if the word is shorter than this, the search will not start)
 ---@field preview_line_length number The maximum number of lines to show in the preview (default: 30)
+---@field additional_fd_options string[] Additional options to pass to the fd command (default: {})
 
 ---@class blink-cmp-wiki-links.WikiLinksSource : blink.cmp.Source
 ---@field wiki_links_opts blink-cmp-wiki-links.Options
@@ -19,6 +20,7 @@ WikiLinksSource.wiki_links_opts = {
   project_root_marker = ".git",
   prefix_min_len = 3,
   preview_line_length = 20,
+  additional_fd_options = {},
 }
 
 ---@param input_wiki_links_opts blink-cmp-wiki-links.Options
