@@ -116,6 +116,7 @@ configuration for blink:
 - [x] Configurable filetypes
 - [x] Workspace detection
 - [x] Display relative path in the preview
+- [ ] take into account space in autocompletion
 - [ ] Add option to add more options to `fd`
 - [ ] Add GIF in README
 - [ ] Add another configurable icon

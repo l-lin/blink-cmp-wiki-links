@@ -85,7 +85,8 @@ function WikiLinksSource:resolve(item, callback)
   item = vim.deepcopy(item)
 
   -- read all file content
-  local text = vim.fn.readfile(item.detail, "", self.wiki_links_opts.preview_line_length) or {}
+  local ok, text = pcall(vim.fn.readfile, item.detail, "", self.wiki_links_opts.preview_line_length)
+  text = ok and text or {}
   item.documentation = {
     kind = "markdown",
     value = table.concat(text, "\n"),
