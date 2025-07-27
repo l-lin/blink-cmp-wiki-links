@@ -66,7 +66,10 @@ function RgBackend:parse_line(line)
   end
 
   return {
-    filepath = filepath:gsub("^" .. vim.pesc(self.wiki_links_opts.project_root_marker) .. "/", ""),
+    filepath = filepath:gsub(
+      "^" .. vim.pesc(self.wiki_links_opts.project_root_marker) .. "/",
+      ""
+    ),
     line_number = tonumber(line_number),
     -- Remove the leading [[ and trailing ]] returned by rg
     match = match:gsub("^%[%[", ""):gsub("%]%]$", ""),
@@ -78,13 +81,13 @@ end
 ---@return blink-cmp-wiki-links.RgOutput[] unique outputs
 function RgBackend:parse_lines(lines)
   local outputs = {}
-  local already_inserted = {}
+  local seen = {}
 
   for _, line in ipairs(lines) do
-    local output = self:parse_line(line)
     if line ~= "" then
-      if output and not already_inserted[output.match] then
-        already_inserted[output.match] = true
+      local output = self:parse_line(line)
+      if output and not seen[output.match] then
+        seen[output.match] = true
         table.insert(outputs, output)
       end
     end
