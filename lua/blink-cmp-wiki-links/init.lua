@@ -8,9 +8,15 @@
 ---@field preview_line_length number The maximum number of lines to show in the preview (default: 20)
 ---@field kind_icon? string Icon to use for the completion item kind (default: "")
 ---@field fd_opts blink-cmp-wiki-links.FdOptions # Options for fd search,
+---@field rg_opts blink-cmp-wiki-links.RgOptions # Options for ripgrep search,
 
 ---@class blink-cmp-wiki-links.FdOptions
 ---@field additional_fd_options string[] Additional options to pass to the fd command (default: {})
+
+---@class blink-cmp-wiki-links.RgOptions
+---@field max_filesize? string # The maximum file size that ripgrep should include in its search. Examples: "1024" (bytes by default), "200K", "1M", "1G"
+---@field search_casing? string # The casing to use for the search in a format that ripgrep accepts. Defaults to "--ignore-case". See `rg --help` for all the available options ripgrep supports, but you can try "--case-sensitive" or "--smart-case".
+---@field additional_rg_options string[] Additional options to pass to the rg command (default: {})
 
 ---@class blink-cmp-wiki-links.WikiLinksSource : blink.cmp.Source
 ---@field wiki_links_opts blink-cmp-wiki-links.Options
@@ -27,6 +33,11 @@ WikiLinksSource.wiki_links_opts = {
   kind_icon = "",
   fd_opts = {
     additional_fd_options = {},
+  },
+  rg_opts = {
+    max_filesize = "1M",
+    search_casing = "--ignore-case",
+    additional_rg_options = {},
   },
 }
 
