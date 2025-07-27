@@ -89,8 +89,21 @@ configuration for blink:
             kind_icon = "",
             fd_opts = {
               -- Additional options to pass to the fd command
-              additional_fd_options = { "--hidden", "--follow", "--max-depth", "3" },
-            }
+              additional_fd_options = {},
+            },
+            rg_opts = {
+              -- The maximum file size of a file that ripgrep should include in
+              -- its search. Useful when your project contains large files that
+              -- might cause performance issues.
+              -- Examples:
+              -- "1024" (bytes by default), "200K", "1M", "1G", which will
+              -- exclude files larger than that size.
+              max_filesize = "1M",
+              -- The casing to use for the search in a format that ripgrep accepts.
+              search_casing = "--ignore-case",
+              -- Additional options to pass to the rg command
+              additional_rg_options = {},
+            },
           },
           score_offset = 85,
         },
@@ -126,7 +139,7 @@ configuration for blink:
 - [ ] take into account space in autocompletion
 - [ ] Add GIF in README
 - [x] Add configurable kind icon
-- [ ] Add `rg` to find all references to the prefix having `[[text]]` in another files and that do not have any file
+- [x] Add `rg` to find all references to the prefix having `[[text]]` in another files and that do not have any file
   - [ ] Display preview of the file and display the part where the text was found
 
 ## 📄 License
