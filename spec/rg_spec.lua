@@ -386,7 +386,7 @@ describe("RgBackend", function()
         }
         local backend = RgBackend.new(opts)
 
-        local result = backend:parse_line("path/to/file.md:42:[[wiki-link]]")
+        local result = backend:parse_line("path/to/file.md:42:[[wiki-link]]", "/workspace")
 
         assert.are.same({
           filepath = "path/to/file.md",
@@ -402,7 +402,7 @@ describe("RgBackend", function()
       }
       local backend = RgBackend.new(opts)
 
-      local result = backend:parse_line(".git/path/to/file.md:42:[[wiki-link]]")
+      local result = backend:parse_line("/workspace/path/to/file.md:42:[[wiki-link]]", "/workspace")
 
       assert.are.same({
         filepath = "path/to/file.md",
@@ -417,7 +417,7 @@ describe("RgBackend", function()
       }
       local backend = RgBackend.new(opts)
 
-      local result = backend:parse_line("file.md:1:[[some wiki link]]")
+      local result = backend:parse_line("file.md:1:[[some wiki link]]", "/workspace")
 
       assert.are.equal("some wiki link", result.match)
     end)
@@ -428,7 +428,7 @@ describe("RgBackend", function()
       }
       local backend = RgBackend.new(opts)
 
-      local result = backend:parse_line("file.md:1:plain text")
+      local result = backend:parse_line("file.md:1:plain text", "/workspace")
 
       assert.are.equal("plain text", result.match)
     end)
@@ -439,7 +439,7 @@ describe("RgBackend", function()
       }
       local backend = RgBackend.new(opts)
 
-      local result = backend:parse_line("file.md:1:[[partial")
+      local result = backend:parse_line("file.md:1:[[partial", "/workspace")
 
       assert.are.equal("partial", result.match)
     end)
@@ -450,7 +450,7 @@ describe("RgBackend", function()
       }
       local backend = RgBackend.new(opts)
 
-      local result = backend:parse_line("file.md:1:partial]]")
+      local result = backend:parse_line("file.md:1:partial]]", "/workspace")
 
       assert.are.equal("partial", result.match)
     end)
@@ -461,7 +461,7 @@ describe("RgBackend", function()
       }
       local backend = RgBackend.new(opts)
 
-      local result = backend:parse_line(":42:[[wiki-link]]")
+      local result = backend:parse_line(":42:[[wiki-link]]", "/workspace")
 
       assert.are.same({
         filepath = "",
@@ -476,7 +476,7 @@ describe("RgBackend", function()
       }
       local backend = RgBackend.new(opts)
 
-      local result = backend:parse_line("file.md::[[wiki-link]]")
+      local result = backend:parse_line("file.md::[[wiki-link]]", "/workspace")
 
       assert.is_nil(result)
     end)
@@ -487,7 +487,7 @@ describe("RgBackend", function()
       }
       local backend = RgBackend.new(opts)
 
-      local result = backend:parse_line("file.md:42:")
+      local result = backend:parse_line("file.md:42:", "/workspace")
 
       assert.are.same({
         filepath = "file.md",
@@ -502,7 +502,7 @@ describe("RgBackend", function()
       }
       local backend = RgBackend.new(opts)
 
-      local result = backend:parse_line("not a valid line format")
+      local result = backend:parse_line("not a valid line format", "/workspace")
 
       assert.is_nil(result)
     end)
@@ -514,7 +514,7 @@ describe("RgBackend", function()
       local backend = RgBackend.new(opts)
 
       local result =
-        backend:parse_line("path/to/file:with:colons.md:42:[[wiki-link]]")
+        backend:parse_line("path/to/file:with:colons.md:42:[[wiki-link]]", "/workspace")
 
       assert.are.same({
         filepath = "path/to/file:with:colons.md",
@@ -529,7 +529,7 @@ describe("RgBackend", function()
       }
       local backend = RgBackend.new(opts)
 
-      local result = backend:parse_line("file.md:42:[[wiki:link:with:colons]]")
+      local result = backend:parse_line("file.md:42:[[wiki:link:with:colons]]", "/workspace")
 
       assert.are.equal("wiki:link:with:colons", result.match)
     end)
@@ -540,7 +540,7 @@ describe("RgBackend", function()
       }
       local backend = RgBackend.new(opts)
 
-      local result = backend:parse_line("file.md:123:[[wiki-link]]")
+      local result = backend:parse_line("file.md:123:[[wiki-link]]", "/workspace")
 
       assert.are.equal(123, result.line_number)
       assert.are.equal("number", type(result.line_number))
@@ -560,7 +560,7 @@ describe("RgBackend", function()
         "file3.md:3:[[link3]]",
       }
 
-      local result = backend:parse_lines(lines)
+      local result = backend:parse_lines(lines, "/workspace")
 
       assert.are.equal(3, #result)
       assert.are.equal("link1", result[1].match)
@@ -580,7 +580,7 @@ describe("RgBackend", function()
         "file2.md:2:[[link2]]",
       }
 
-      local result = backend:parse_lines(lines)
+      local result = backend:parse_lines(lines, "/workspace")
 
       assert.are.equal(2, #result)
       assert.are.equal("link1", result[1].match)
@@ -599,7 +599,7 @@ describe("RgBackend", function()
         "file2.md:2:[[link2]]",
       }
 
-      local result = backend:parse_lines(lines)
+      local result = backend:parse_lines(lines, "/workspace")
 
       assert.are.equal(2, #result)
       assert.are.equal("link1", result[1].match)
@@ -618,7 +618,7 @@ describe("RgBackend", function()
         "file3.md:10:[[unique-link]]",
       }
 
-      local result = backend:parse_lines(lines)
+      local result = backend:parse_lines(lines, "/workspace")
 
       assert.are.equal(2, #result)
       assert.are.equal("duplicate-link", result[1].match)
@@ -637,7 +637,7 @@ describe("RgBackend", function()
         "file3.md:3:[[first-link]]",
       }
 
-      local result = backend:parse_lines(lines)
+      local result = backend:parse_lines(lines, "/workspace")
 
       assert.are.equal(2, #result)
       assert.are.equal("first-link", result[1].match)
@@ -651,7 +651,7 @@ describe("RgBackend", function()
       }
       local backend = RgBackend.new(opts)
 
-      local result = backend:parse_lines({})
+      local result = backend:parse_lines({}, "/workspace")
 
       assert.are.equal(0, #result)
     end)
@@ -672,7 +672,7 @@ describe("RgBackend", function()
         "file3.md:3:[[valid1]]",
       }
 
-      local result = backend:parse_lines(lines)
+      local result = backend:parse_lines(lines, "/workspace")
 
       assert.are.equal(2, #result)
       assert.are.equal("valid1", result[1].match)
@@ -689,7 +689,7 @@ describe("RgBackend", function()
         "path/to/file.md:42:[[wiki-link]]",
       }
 
-      local result = backend:parse_lines(lines)
+      local result = backend:parse_lines(lines, "/workspace")
 
       assert.are.equal(1, #result)
       assert.are.same({

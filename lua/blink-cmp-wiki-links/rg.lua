@@ -58,18 +58,16 @@ end
 
 ---@param self blink-cmp-wiki-links.RgBackend
 ---@param line string the line to parse, in the format "filepath:line_number:match"
+---@param root string the root directory to search in
 ---@return blink-cmp-wiki-links.RgOutput|nil
-function RgBackend:parse_line(line)
+function RgBackend:parse_line(line, root)
   local filepath, line_number, match = line:match("^(.-):(%d+):(.*)$")
   if not filepath or not line_number or not match then
     return nil
   end
 
   return {
-    filepath = filepath:gsub(
-      "^" .. vim.pesc(self.wiki_links_opts.project_root_marker) .. "/",
-      ""
-    ),
+    filepath = filepath:gsub("^" .. root .. "/", ""),
     line_number = tonumber(line_number),
     -- Remove the leading [[ and trailing ]] returned by rg
     match = match:gsub("^%[%[", ""):gsub("%]%]$", ""),
@@ -78,14 +76,15 @@ end
 
 ---@param self blink-cmp-wiki-links.RgBackend
 ---@param lines string[] the lines to parse
+---@param root string the root directory to search in
 ---@return blink-cmp-wiki-links.RgOutput[] unique outputs
-function RgBackend:parse_lines(lines)
+function RgBackend:parse_lines(lines, root)
   local outputs = {}
   local seen = {}
 
   for _, line in ipairs(lines) do
     if line ~= "" then
-      local output = self:parse_line(line)
+      local output = self:parse_line(line, root)
       if output and not seen[output.match] then
         seen[output.match] = true
         table.insert(outputs, output)
@@ -111,7 +110,7 @@ function RgBackend:get_matches(prefix, callback)
       return
     end
 
-    local outputs = self:parse_lines(vim.split(result.stdout, "\n"))
+    local outputs = self:parse_lines(vim.split(result.stdout, "\n"), root)
 
     local items = {}
     for _, output in ipairs(outputs) do
