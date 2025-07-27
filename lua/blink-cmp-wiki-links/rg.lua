@@ -121,7 +121,7 @@ function RgBackend:get_matches(prefix, callback)
         kind_icon = self.wiki_links_opts.kind_icon,
         insertText = "[[" .. output.match .. "]]",
         insertTextFormat = vim.lsp.protocol.InsertTextFormat.PlainText,
-        detail = output.filepath,
+        detail = output.filepath .. ":" .. output.line_number,
       })
     end
 

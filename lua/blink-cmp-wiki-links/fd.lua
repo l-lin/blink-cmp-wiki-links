@@ -69,7 +69,7 @@ function FdBackend:get_matches(prefix, callback)
           kind_icon = self.wiki_links_opts.kind_icon,
           insertText = "[[" .. label .. "]]",
           insertTextFormat = vim.lsp.protocol.InsertTextFormat.PlainText,
-          detail = file_path,
+          detail = file_path .. ":1",
           documentation = "Link to: " .. file_path,
         })
       end

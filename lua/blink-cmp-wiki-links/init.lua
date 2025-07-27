@@ -44,8 +44,11 @@ WikiLinksSource.wiki_links_opts = {
 ---@param input_wiki_links_opts blink-cmp-wiki-links.Options
 function WikiLinksSource.new(input_wiki_links_opts)
   local self = setmetatable({}, WikiLinksSource)
-  WikiLinksSource.wiki_links_opts =
-    vim.tbl_deep_extend("force", WikiLinksSource.wiki_links_opts, input_wiki_links_opts or {})
+  WikiLinksSource.wiki_links_opts = vim.tbl_deep_extend(
+    "force",
+    WikiLinksSource.wiki_links_opts,
+    input_wiki_links_opts or {}
+  )
   return self
 end
 
@@ -65,6 +68,31 @@ function WikiLinksSource:get_prefix(context)
   return prefix
 end
 
+---Extract file preview content starting from a specific line
+---@param filepath string the path to the file
+---@param line_number number the line number to start from (1-indexed)
+---@param max_lines number the maximum number of lines to return
+---@return string[] array of lines for the preview
+function WikiLinksSource:get_file_preview(filepath, line_number, max_lines)
+  local end_line = line_number + max_lines - 1
+  local cmd = string.format(
+    "sed -n '%d,%dp' %s",
+    line_number,
+    end_line,
+    vim.fn.shellescape(filepath)
+  )
+
+  local result = vim.fn.system(cmd)
+  local text = {}
+  if vim.v.shell_error == 0 and result ~= "" then
+    text = vim.split(result, "\n")
+    -- Remove last empty line if present (sed output often has trailing newline)
+    if #text > 0 and text[#text] == "" then
+      table.remove(text)
+    end
+  end
+  return text
+end
 
 -- Check if the source should be enabled in current context
 ---@param self blink.cmp.Source
@@ -90,7 +118,9 @@ function WikiLinksSource:get_completions(ctx, callback)
     return
   end
 
-  local backend = require("blink-cmp-wiki-links.combined").new(WikiLinksSource.wiki_links_opts)
+  local backend = require("blink-cmp-wiki-links.combined").new(
+    WikiLinksSource.wiki_links_opts
+  )
   local cancellation_function = backend:get_matches(prefix, callback)
   return cancellation_function
 end
@@ -104,9 +134,18 @@ end
 function WikiLinksSource:resolve(item, callback)
   item = vim.deepcopy(item)
 
-  -- read all file content
-  local ok, text = pcall(vim.fn.readfile, item.detail, "", self.wiki_links_opts.preview_line_length)
-  text = ok and text or {}
+  -- Parse filepath and line number from detail field (format: "filepath:line_number")
+  local filepath, line_number_str = item.detail:match("^(.-):(%d+)$")
+  if not filepath or not line_number_str then
+    -- Fallback if detail doesn't contain line number
+    filepath = item.detail
+    line_number_str = "1"
+  end
+
+  local line_number = tonumber(line_number_str) or 1
+
+  local text = self:get_file_preview(filepath, line_number, self.wiki_links_opts.preview_line_length)
+
   item.documentation = {
     kind = "markdown",
     value = table.concat(text, "\n"),
