@@ -2,6 +2,8 @@
 
 A [blink.cmp](https://github.com/Saghen/blink.cmp) completion source that provides fuzzy matching for markdown file names and existing wiki links, automatically formatting them as wiki links (`[[filename]]`).
 
+![demo](./.github/assets/demo.gif)
+
 ## ✨ Features
 
 - **Always-on completion**: No need to type `[[` - completions appear as you type
