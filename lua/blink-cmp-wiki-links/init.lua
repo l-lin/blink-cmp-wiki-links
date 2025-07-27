@@ -90,7 +90,7 @@ function WikiLinksSource:get_completions(ctx, callback)
     return
   end
 
-  local backend = require("blink-cmp-wiki-links.fd").new(WikiLinksSource.wiki_links_opts)
+  local backend = require("blink-cmp-wiki-links.combined").new(WikiLinksSource.wiki_links_opts)
   local cancellation_function = backend:get_matches(prefix, callback)
   return cancellation_function
 end
