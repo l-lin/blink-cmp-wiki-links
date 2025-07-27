@@ -66,6 +66,7 @@ function FdBackend:get_matches(prefix, callback)
           table.insert(items, {
             label = label,
             kind = vim.lsp.protocol.CompletionItemKind.File,
+            kind_icon = self.wiki_links_opts.kind_icon,
             insertText = "[[" .. label .. "]]",
             insertTextFormat = vim.lsp.protocol.InsertTextFormat.PlainText,
             detail = file_path,
