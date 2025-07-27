@@ -33,7 +33,9 @@ describe("FdBackend", function()
       local opts = {
         filetypes = {},
         exclude_paths = {},
-        additional_fd_options = {}
+        fd_opts = {
+          additional_fd_options = {}
+        }
       }
       local backend = FdBackend.new(opts)
 
@@ -46,7 +48,9 @@ describe("FdBackend", function()
       local opts = {
         filetypes = {"md"},
         exclude_paths = {},
-        additional_fd_options = {}
+        fd_opts = {
+          additional_fd_options = {}
+        }
       }
       local backend = FdBackend.new(opts)
 
@@ -59,7 +63,9 @@ describe("FdBackend", function()
       local opts = {
         filetypes = {"md", "markdown", "txt"},
         exclude_paths = {},
-        additional_fd_options = {}
+        fd_opts = {
+          additional_fd_options = {}
+        }
       }
       local backend = FdBackend.new(opts)
 
@@ -72,7 +78,9 @@ describe("FdBackend", function()
       local opts = {
         filetypes = {},
         exclude_paths = {".git"},
-        additional_fd_options = {}
+        fd_opts = {
+          additional_fd_options = {}
+        }
       }
       local backend = FdBackend.new(opts)
 
@@ -85,7 +93,9 @@ describe("FdBackend", function()
       local opts = {
         filetypes = {},
         exclude_paths = {".git", "node_modules", ".obsidian"},
-        additional_fd_options = {}
+        fd_opts = {
+          additional_fd_options = {}
+        }
       }
       local backend = FdBackend.new(opts)
 
@@ -98,7 +108,9 @@ describe("FdBackend", function()
       local opts = {
         filetypes = {},
         exclude_paths = {},
-        additional_fd_options = {}
+        fd_opts = {
+          additional_fd_options = {}
+        }
       }
       local backend = FdBackend.new(opts)
 
@@ -111,7 +123,9 @@ describe("FdBackend", function()
       local opts = {
         filetypes = {},
         exclude_paths = {},
-        additional_fd_options = {}
+        fd_opts = {
+          additional_fd_options = {}
+        }
       }
       local backend = FdBackend.new(opts)
 
@@ -124,7 +138,9 @@ describe("FdBackend", function()
       local opts = {
         filetypes = {},
         exclude_paths = {},
-        additional_fd_options = {}
+        fd_opts = {
+          additional_fd_options = {}
+        }
       }
       local backend = FdBackend.new(opts)
 
@@ -137,7 +153,9 @@ describe("FdBackend", function()
       local opts = {
         filetypes = {"md", "markdown"},
         exclude_paths = {".git", "node_modules"},
-        additional_fd_options = {}
+        fd_opts = {
+          additional_fd_options = {}
+        }
       }
       local backend = FdBackend.new(opts)
 
@@ -157,7 +175,9 @@ describe("FdBackend", function()
       local opts = {
         filetypes = {"txt", "md", "org"},
         exclude_paths = {"dist", ".git", "build"},
-        additional_fd_options = {}
+        fd_opts = {
+          additional_fd_options = {}
+        }
       }
       local backend = FdBackend.new(opts)
 
@@ -179,7 +199,9 @@ describe("FdBackend", function()
       local opts = {
         filetypes = {"md"},
         exclude_paths = {},
-        additional_fd_options = {}
+        fd_opts = {
+          additional_fd_options = {}
+        }
       }
       local backend = FdBackend.new(opts)
 
@@ -192,7 +214,9 @@ describe("FdBackend", function()
       local opts = {
         filetypes = {},
         exclude_paths = {},
-        additional_fd_options = {"--hidden"}
+        fd_opts = {
+          additional_fd_options = {"--hidden"}
+        }
       }
       local backend = FdBackend.new(opts)
 
@@ -205,7 +229,9 @@ describe("FdBackend", function()
       local opts = {
         filetypes = {},
         exclude_paths = {},
-        additional_fd_options = {"--hidden", "--follow", "--max-depth", "3"}
+        fd_opts = {
+          additional_fd_options = {"--hidden", "--follow", "--max-depth", "3"}
+        }
       }
       local backend = FdBackend.new(opts)
 
@@ -218,7 +244,9 @@ describe("FdBackend", function()
       local opts = {
         filetypes = {"md"},
         exclude_paths = {".git"},
-        additional_fd_options = {"--hidden", "--follow"}
+        fd_opts = {
+          additional_fd_options = {"--hidden", "--follow"}
+        }
       }
       local backend = FdBackend.new(opts)
 
@@ -238,7 +266,9 @@ describe("FdBackend", function()
       local opts = {
         filetypes = {"md", "markdown"},
         exclude_paths = {".git", "node_modules"},
-        additional_fd_options = {"--hidden", "--max-depth", "2"}
+        fd_opts = {
+          additional_fd_options = {"--hidden", "--max-depth", "2"}
+        }
       }
       local backend = FdBackend.new(opts)
 

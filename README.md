@@ -85,10 +85,12 @@ configuration for blink:
             prefix_min_len = 3,
             -- Show more lines in preview
             preview_line_length = 20,
-            -- Additional options to pass to the fd command
-            additional_fd_options = { "--hidden", "--follow", "--max-depth", "3" },
             -- Custom icon for the completion item kind
             kind_icon = "",
+            fd_opts = {
+              -- Additional options to pass to the fd command
+              additional_fd_options = { "--hidden", "--follow", "--max-depth", "3" },
+            }
           },
           score_offset = 85,
         },

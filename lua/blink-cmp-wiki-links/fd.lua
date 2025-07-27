@@ -1,9 +1,9 @@
----@class blink-ripgrep.FdBackend
+---@class blink-cmp-wiki-links.FdBackend : blink-cmp-wiki-links.Backend
 ---@field wiki_links_opts blink-cmp-wiki-links.Options
 local FdBackend = {}
 
 ---@param wiki_links_opts blink-cmp-wiki-links.Options
----@return blink-ripgrep.FdBackend
+---@return blink-cmp-wiki-links.FdBackend
 function FdBackend.new(wiki_links_opts)
   local self = setmetatable({}, { __index = FdBackend })
   self.wiki_links_opts = wiki_links_opts
@@ -11,13 +11,14 @@ function FdBackend.new(wiki_links_opts)
 end
 
 ---Build fd command with options and prefix
+---@param self blink-cmp-wiki-links.FdBackend
 ---@param prefix string|nil the prefix to search for
 ---@return string[] the fd command array
 function FdBackend:build_fd_command(prefix)
   local cmd = { "fd" }
 
   -- Add custom fd options first
-  for _, option in ipairs(self.wiki_links_opts.additional_fd_options) do
+  for _, option in ipairs(self.wiki_links_opts.fd_opts.additional_fd_options) do
     table.insert(cmd, option)
   end
 
@@ -41,10 +42,12 @@ function FdBackend:build_fd_command(prefix)
   return cmd
 end
 
----@param self blink-ripgrep.FdBackend
+---@param self blink-cmp-wiki-links.FdBackend
 ---@param prefix string the prefix to search for
+---@param context blink.cmp.Context the blink context
 ---@param callback fun(response?: blink.cmp.CompletionResponse) callback to resolve the completion response
-function FdBackend:get_matches(prefix, callback)
+---@diagnostic disable-next-line: unused-local
+function FdBackend:get_matches(prefix, context, callback)
   local cmd = self:build_fd_command(prefix)
 
   local root = vim.fs.root(0, self.wiki_links_opts.project_root_marker) or vim.fn.getcwd()
