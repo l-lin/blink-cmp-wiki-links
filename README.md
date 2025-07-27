@@ -1,16 +1,18 @@
 # blink-cmp-wiki-links
 
-A [blink.cmp](https://github.com/Saghen/blink.cmp) completion source that provides fuzzy matching for markdown file names and automatically formats them as wiki links (`[[filename]]`).
+A [blink.cmp](https://github.com/Saghen/blink.cmp) completion source that provides fuzzy matching for markdown file names and existing wiki links, automatically formatting them as wiki links (`[[filename]]`).
 
 ## ✨ Features
 
 - **Always-on completion**: No need to type `[[` - completions appear as you type
 - **Fuzzy matching**: Powered by blink.cmp's performance-optimized fuzzy matcher
 - **Auto wiki-link formatting**: Accepted completions become `[[filename]]`
+- **Dual search backends**: Combines file discovery (`fd`) with existing wiki link search (`rg`)
+- **Smart deduplication**: File results take priority over existing wiki links when duplicates exist
 - **Smart workspace detection**: Automatically finds your notes workspace
-- **Performance optimized**: Uses `fd` for fast file discovery
+- **Performance optimized**: Uses `fd` for fast file discovery and `rg` for existing link detection
 - **Configurable**: Customize filetypes, exclusions, and workspace detection
-- **File preview**: Shows file content preview in documentation
+- **Contextual file preview**: Shows file content preview starting from the relevant line
 - **Minimum prefix length**: Configurable minimum characters before search starts
 
 ## 📦 Installation
@@ -18,10 +20,8 @@ A [blink.cmp](https://github.com/Saghen/blink.cmp) completion source that provid
 
 - Neovim 0.9+
 - [blink.cmp](https://github.com/Saghen/blink.cmp)
-
-__Required dependencies__
-
-- `fd`: For fast file discovery (required, not optional)
+- [`fd`](https://github.com/sharkdp/fd): For fast file discovery
+- [`rg`](https://github.com/BurntSushi/ripgrep): For searching existing wiki links in files
 
 ### Using [lazy.nvim](https://github.com/folke/lazy.nvim)
 
@@ -117,30 +117,24 @@ configuration for blink:
 
 1. Open any file with a supported filetype (markdown, md by default)
 2. Start typing a filename (minimum 3 characters by default)
-3. Select from the fuzzy-matched completions
-4. The selected filename becomes `[[filename]]` automatically
-5. Hover over completions to see file content preview
+3. See completions from two sources:
+   - **Files**: Matching filenames from your workspace (higher priority)
+   - **Existing links**: Wiki links already used in your project files
+4. Select from the fuzzy-matched completions
+5. The selected item becomes `[[filename]]` automatically
+6. Hover over completions to see contextual file content preview:
+   - **Files**: Preview starts from line 1
+   - **Existing links**: Preview starts from the line where the link was found
 
 ## ⚡ Performance
 
-- **Fast file discovery**: Uses `fd` command for efficient file searching
+- **Dual-backend architecture**: Combines `fd` for file discovery and `rg` for existing link search
+- **Concurrent execution**: Both backends run simultaneously for optimal performance
+- **Smart deduplication**: Files take priority over existing links to avoid duplicates
 - **Prefix filtering**: Only searches when minimum prefix length is met
 - **Lazy preview loading**: File content loaded only when needed for documentation
-- **Efficient exclusions**: Directory exclusions applied during `fd` scanning
-
-## 📃 TODO
-
-- [x] Basic wiki link completion
-- [x] File content preview
-- [x] Configurable filetypes
-- [x] Workspace detection
-- [x] Display relative path in the preview
-- [x] Add option to add more options to `fd`
-- [ ] take into account space in autocompletion
-- [ ] Add GIF in README
-- [x] Add configurable kind icon
-- [x] Add `rg` to find all references to the prefix having `[[text]]` in another files and that do not have any file
-  - [ ] Display preview of the file and display the part where the text was found
+- **Efficient exclusions**: Directory exclusions applied during both `fd` and `rg` scanning
+- **Contextual previews**: Uses `sed` to efficiently extract specific line ranges for preview
 
 ## 📄 License
 
