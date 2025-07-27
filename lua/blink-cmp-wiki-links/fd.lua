@@ -44,10 +44,8 @@ end
 
 ---@param self blink-cmp-wiki-links.FdBackend
 ---@param prefix string the prefix to search for
----@param context blink.cmp.Context the blink context
 ---@param callback fun(response?: blink.cmp.CompletionResponse) callback to resolve the completion response
----@diagnostic disable-next-line: unused-local
-function FdBackend:get_matches(prefix, context, callback)
+function FdBackend:get_matches(prefix, callback)
   local cmd = self:build_fd_command(prefix)
 
   local root = vim.fs.root(0, self.wiki_links_opts.project_root_marker) or vim.fn.getcwd()
