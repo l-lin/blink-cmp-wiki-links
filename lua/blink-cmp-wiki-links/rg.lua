@@ -106,34 +106,30 @@ function RgBackend:get_matches(prefix, callback)
 
   -- Execute the command and process results
   local rg = vim.system(cmd, { cwd = root }, function(result)
-    vim.schedule(function()
-      if result.code ~= 0 then
-        callback()
-        return
-      end
+    if result.code ~= 0 then
+      callback()
+      return
+    end
 
-      local outputs = self:parse_lines(vim.split(result.stdout, "\n"))
+    local outputs = self:parse_lines(vim.split(result.stdout, "\n"))
 
-      local items = {}
-      for _, output in ipairs(outputs) do
-        table.insert(items, {
-          label = output.match,
-          kind = vim.lsp.protocol.CompletionItemKind.File,
-          kind_icon = self.wiki_links_opts.kind_icon,
-          insertText = "[[" .. output.match .. "]]",
-          insertTextFormat = vim.lsp.protocol.InsertTextFormat.PlainText,
-          detail = output.filepath,
-        })
-      end
+    local items = {}
+    for _, output in ipairs(outputs) do
+      table.insert(items, {
+        label = output.match,
+        kind = vim.lsp.protocol.CompletionItemKind.File,
+        kind_icon = self.wiki_links_opts.kind_icon,
+        insertText = "[[" .. output.match .. "]]",
+        insertTextFormat = vim.lsp.protocol.InsertTextFormat.PlainText,
+        detail = output.filepath,
+      })
+    end
 
-      vim.schedule(function()
-        callback({
-          is_incomplete_forward = true,
-          is_incomplete_backward = true,
-          items = vim.tbl_values(items),
-        })
-      end)
-    end)
+    callback({
+      is_incomplete_forward = true,
+      is_incomplete_backward = true,
+      items = vim.tbl_values(items),
+    })
   end)
 
   return function()

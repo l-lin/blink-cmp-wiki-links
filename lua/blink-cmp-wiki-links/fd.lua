@@ -52,38 +52,34 @@ function FdBackend:get_matches(prefix, callback)
 
   -- Execute the command and process results
   local fd = vim.system(cmd, { cwd = root }, function(result)
-    vim.schedule(function()
-      if result.code ~= 0 then
-        callback()
-        return
-      end
+    if result.code ~= 0 then
+      callback()
+      return
+    end
 
-      local lines = vim.split(result.stdout, "\n")
+    local lines = vim.split(result.stdout, "\n")
 
-      local items = {}
-      for _, file_path in ipairs(lines) do
-        if file_path ~= "" then
-          local label = vim.fn.fnamemodify(file_path, ":t:r")
-          table.insert(items, {
-            label = label,
-            kind = vim.lsp.protocol.CompletionItemKind.File,
-            kind_icon = self.wiki_links_opts.kind_icon,
-            insertText = "[[" .. label .. "]]",
-            insertTextFormat = vim.lsp.protocol.InsertTextFormat.PlainText,
-            detail = file_path,
-            documentation = "Link to: " .. file_path,
-          })
-        end
-      end
-
-      vim.schedule(function()
-        callback({
-          is_incomplete_forward = true,
-          is_incomplete_backward = true,
-          items = vim.tbl_values(items),
+    local items = {}
+    for _, file_path in ipairs(lines) do
+      if file_path ~= "" then
+        local label = vim.fn.fnamemodify(file_path, ":t:r")
+        table.insert(items, {
+          label = label,
+          kind = vim.lsp.protocol.CompletionItemKind.File,
+          kind_icon = self.wiki_links_opts.kind_icon,
+          insertText = "[[" .. label .. "]]",
+          insertTextFormat = vim.lsp.protocol.InsertTextFormat.PlainText,
+          detail = file_path,
+          documentation = "Link to: " .. file_path,
         })
-      end)
-    end)
+      end
+    end
+
+    callback({
+      is_incomplete_forward = true,
+      is_incomplete_backward = true,
+      items = vim.tbl_values(items),
+    })
   end)
 
   return function()
